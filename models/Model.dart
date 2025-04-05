@@ -3,13 +3,15 @@ import 'dart:io'; // Para manipulação de arquivos
 import 'dart:async'; //importando o timeout
 import '../assets/index.dart';
 
+//{type: String, field: name}
+typedef DataModel = Map<String, dynamic>;
+
 class Model {
-  //{type: String, field: name}
-  List _attr = [];
+  List<DataModel> _attr = [];
   String _name = "";
   String _filePath = "./Sequencelizer/assets";
 
-  void populate(String modelName, List<Map<String, dynamic>> dataModel) {
+  void populate(String modelName, List<DataModel> dataModel) {
     dataModel.forEach((model) {
       if (model.keys.length == 2 &&
           model.keys.contains("type") &&
@@ -44,35 +46,59 @@ class Model {
     }
   }
 
-  Future<void> checkFile() async {
+  Future<bool> checkFile() async {
     File arquivo = File('${this._filePath}/${this._name}.json');
-    if (await arquivo.exists()) {
-      throw Exception("Model already exists");
-    }
+    return await arquivo.exists();
+  }
+
+  checkModelStructure(List<DataModel> dataModel) async {
+    File jsonFile = File('${this._filePath}/${this._name}.json');
+    final jsonString = await jsonFile.readAsString();
+    final jsonData = jsonDecode(jsonString);
+    Map<String, dynamic> data = jsonData[this._name][0];
+
+    //Transformando o modelo enviado para o array de valores do field
+    //Itarable eh uma iterface e List eh uma subclasse de Iterable
+    Iterable<String> modelTemp = dataModel.map((el) => el['field']);
+    //Verificar se o field que foi enviado bate com o existente
+    data.entries.forEach((element) {
+      String fieldKey = element.key;
+      if (!modelTemp.contains(fieldKey))
+        throw Exception("Model sent doesn't match with actual model");
+    });
   }
 
   Future<Sequencelizer> index(
     String modelName,
-    List<Map<String, dynamic>> dataModel,
+    List<DataModel> dataModel,
   ) async {
     print("Start model checking");
     this.populate(modelName, dataModel);
     await Future.delayed(Duration(seconds: 2));
     print("Check modeling existance");
-    await this.checkFile();
-    await Future.delayed(Duration(seconds: 2));
-    print("Population is finished");
-    await this.createModel();
-    await Future.delayed(Duration(seconds: 2));
-    print("Model created");
+    var checked = await this.checkFile();
+    if (!checked) {
+      await Future.delayed(Duration(seconds: 2));
+      print("Population is finished");
+      await this.createModel();
+      await Future.delayed(Duration(seconds: 2));
+      print("Model created");
+    } else {
+      await this.checkModelStructure(dataModel);
+      print("Model validated");
+    }
 
     //Vamos criar a instancia do Sequencelizer
     print("Sequencelizer initializing");
     return Sequencelizer(modelTemp: this);
   }
 
-  get attr {
+  attrText() {
     return "Model name: ${this._name}, Model Structure: ${this._attr}";
+  }
+
+  get attr {
+    return this._attr;
   }
 
   get name {

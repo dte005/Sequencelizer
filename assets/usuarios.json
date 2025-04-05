@@ -1,1 +1,8 @@
-{"usuarios":[]}
+{"usuarios":[
+    {
+        "name": "Daniel Teixeira da silva",
+        "active": true,
+        "age": 40,
+        "email": "danieldts2013@gmail.com"
+    }
+]}
