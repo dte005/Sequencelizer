@@ -21,8 +21,10 @@ class Sequencelizer {
   }
 
   //Recupera todos do modelo
-  findAll() {
-    print("Done");
+  Future findAll() async {
+    final jsonString = await this.jsonFile!.readAsString();
+    final jsonData = jsonDecode(jsonString);
+    return jsonData[this.modelTemp!.name];
   }
 
   //Cria um registro

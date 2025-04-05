@@ -1,0 +1,11 @@
+name: sequencelizer
+description: modulo ORM para arquivo json local
+
+environment:
+  sdk: '^3.7.0'
+
+dependencies:
+  # Outras dependências do projeto
+
+dev_dependencies:
+  test: ^1.6.1
