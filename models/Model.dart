@@ -10,6 +10,7 @@ class Model {
   List<DataModel> _attr = [];
   String _name = "";
   String _filePath = "./Sequencelizer/assets";
+  final availableTypes = ["String", "double", "bool", "int"];
 
   void populate(String modelName, List<DataModel> dataModel) {
     dataModel.forEach((model) {
@@ -19,12 +20,8 @@ class Model {
           modelName.isNotEmpty) {
         model.entries.forEach((action) {
           if (action.key.contains('type')) {
-            if (!action.value.toString().contains('String') &&
-                !action.value.toString().contains('double') &&
-                !action.value.toString().contains('bool') &&
-                !action.value.toString().contains('int')) {
+            if (!availableTypes.contains(action.value.toString()))
               throw Exception("DataModel passed is not formatted");
-            }
           }
         });
         this._attr.add(model);
@@ -55,7 +52,7 @@ class Model {
     File jsonFile = File('${this._filePath}/${this._name}.json');
     final jsonString = await jsonFile.readAsString();
     final jsonData = jsonDecode(jsonString);
-    Map<String, dynamic> data = jsonData[this._name][0];
+    DataModel data = jsonData[this._name][0];
 
     //Transformando o modelo enviado para o array de valores do field
     //Itarable eh uma iterface e List eh uma subclasse de Iterable
@@ -77,6 +74,7 @@ class Model {
     await Future.delayed(Duration(seconds: 2));
     print("Check modeling existance");
     var checked = await this.checkFile();
+    //Verifica se o arquivo ja exite dentro da pasta
     if (!checked) {
       await Future.delayed(Duration(seconds: 2));
       print("Population is finished");

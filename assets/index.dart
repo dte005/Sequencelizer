@@ -38,11 +38,29 @@ class Sequencelizer {
   }
 
   //Cria um registro
-  createOne(Map<String, dynamic> body) {
+  Future createOne(Map<String, dynamic> bodySent) async {
+    if (this.jsonFile == null)
+      throw Exception("Create sequencelizer instance first");
     //Validar se as keys enviadas sao do mesmo formato e tipo da do modelo
+    List<String> sentKeys = bodySent.keys.toList();
+    List<dynamic> sentValues = bodySent.values.toList();
+    if (sentKeys.length != _modelKeys)
+      throw Exception("Body content is not valid");
+    sentKeys.forEach((key) {
+      if (!_modelKeys.contains(key))
+        throw Exception("Body content is not valid");
+    });
+    sentValues.forEach((values) {
+      if (this.modelTemp!.availableTypes.contains("")) {
+        throw Exception("Body senti is not valid");
+      }
+    });
     //Recuperar o arquivo, adicionar um usuario ao array de usuarios
-    //Salvar o arquivo
-    return 0;
+    Map data = await this._readAndTransform();
+    data[this.modelTemp!.name].add(bodySent);
+    //Salvar arquivo
+    String jsonEncoded = jsonEncode(data);
+    this.jsonFile!.writeAsString(jsonEncoded);
   }
 
   //Deleta um registro
