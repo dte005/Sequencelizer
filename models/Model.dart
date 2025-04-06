@@ -52,10 +52,11 @@ class Model {
     File jsonFile = File('${this._filePath}/${this._name}.json');
     final jsonString = await jsonFile.readAsString();
     final jsonData = jsonDecode(jsonString);
-    DataModel data = jsonData[this._name][0];
+    var data = jsonData[this._name];
+    data = data.length > 0 ? data[0] : {};
 
     //Transformando o modelo enviado para o array de valores do field
-    //Itarable eh uma iterface e List eh uma subclasse de Iterable
+    ////Itarable eh uma iterface e List eh uma subclasse de Iterable
     Iterable<String> modelTemp = dataModel.map((el) => el['field']);
     //Verificar se o field que foi enviado bate com o existente
     data.entries.forEach((element) {
