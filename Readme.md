@@ -5,6 +5,8 @@ O modulo ORM para arquivos em formato json.
 ## 📝 Descrição
 
 O modulo cria os modelos de arquivos que servem para CRUD de apis locais.
+<p>Modulo a ser importado dentro do main de qualquer executor dart.</p>
+<p>Utilizado para controle de dados através de arquivos locais (Json)</p>
 
 ## 🚀 Instalação
 
